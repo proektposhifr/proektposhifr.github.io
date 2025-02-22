@@ -30,11 +30,13 @@
             margin-bottom: 20px;
         }
         .tab {
-            padding: 10px 20px;
+            padding: 10px 10px;
             cursor: pointer;
             background-color: #e0e0e0;
             border-radius: 4px;
             text-align: center;
+            overflow-wrap: break-word;
+            white-space: normal;
         }
         .tab.active {
             background-color: #007bff;
@@ -48,12 +50,17 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
+            word-wrap: break-word;
         }
         button {
             background-color: #007bff;
             color: white;
             cursor: pointer;
             min-height: 48px;
+            white-space: normal;
+            overflow-wrap: break-word;
+            text-align: center;
+            padding: 10px;
         }
         button:hover {
             background-color: #0056b3;
@@ -67,27 +74,50 @@
 
         @media (max-width: 450px) {
             .tabs {
-                flex-direction: column; 
-                gap: 10px; 
+                flex-direction: column;
+                gap: 10px;
             }
             .tab {
-                padding: 8px 12px;
+                padding: 8px 1px;
                 width: 100%;
             }
             textarea, input, button {
-                font-size: 14px; 
-                padding: 8px; 
+                font-size: 14px;
+                padding: 6px;
             }
             button {
-                min-height: 40px; 
+                min-height: 36px;
+                padding: 6px 10px;
             }
             .container {
                 padding: 10px;
             }
         }
+
+        @media (max-width: 350px) {
+            .tabs {
+                gap: 5px;
+            }
+            .tab {
+                padding: 6px 1px;
+                font-size: 12px;
+            }
+            textarea, input, button {
+                font-size: 12px;
+                padding: 4px;
+            }
+            button {
+                min-height: 32px;
+                padding: 4px 8px;
+            }
+            .container {
+                padding: 8px;
+            }
+        }
+
         @media (min-width: 600px) {
             .container {
-                padding: 20px; 
+                padding: 20px;
             }
         }
     </style>
