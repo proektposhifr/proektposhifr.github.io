@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Проект по шифрованию</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+        }
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .tab.active {
+            background-color: #007bff;
+            color: white;
+        }
+        textarea, input, button {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            min-height: 48px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #encryptTab, #decryptTab, #hashTab {
+            display: none;
+        }
+        #encryptTab.active, #decryptTab.active, #hashTab.active {
+            display: block;
+        }
+
+        @media (max-width: 450px) {
+            .tabs {
+                flex-direction: column; 
+                gap: 10px; 
+            }
+            .tab {
+                padding: 8px 12px;
+                width: 100%;
+            }
+            textarea, input, button {
+                font-size: 14px; 
+                padding: 8px; 
+            }
+            button {
+                min-height: 40px; 
+            }
+            .container {
+                padding: 10px;
+            }
+        }
+        @media (min-width: 600px) {
+            .container {
+                padding: 20px; 
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="text-align: center;">Шифрование и Хеширование</h1>
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('encrypt')">Зашифровать</div>
+            <div class="tab" onclick="showTab('decrypt')">Расшифровать</div>
+            <div class="tab" onclick="showTab('hash')">Хешировать</div>
+        </div>
+
+        <div id="encryptTab" class="active">
+            <textarea id="inputEncrypt" placeholder="Введите текст" rows="4"></textarea>
+            <input id="keyInputEncrypt" type="password" placeholder="Введите ключ">
+            <button onclick="encrypt()">Зашифровать</button>
+            <textarea id="outputEncrypt" placeholder="Зашифрованный текст" rows="4" readonly></textarea>
+        </div>
+
+        <div id="decryptTab">
+            <textarea id="inputDecrypt" placeholder="Введите зашифрованный текст" rows="4"></textarea>
+            <input id="keyInputDecrypt" type="password" placeholder="Введите ключ">
+            <button onclick="decrypt()">Расшифровать</button>
+            <textarea id="outputDecrypt" placeholder="Расшифрованный текст" rows="4" readonly></textarea>
+        </div>
+
+        <div id="hashTab">
+            <textarea id="inputHash" placeholder="Введите текст" rows="4"></textarea>
+            <button onclick="hash()">Хешировать</button>
+            <textarea id="outputHash" placeholder="Хешированный текст" rows="4" readonly></textarea>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tab) {
+            const encryptTab = document.getElementById('encryptTab');
+            const decryptTab = document.getElementById('decryptTab');
+            const hashTab = document.getElementById('hashTab');
+            const tabs = document.querySelectorAll('.tab');
+
+            if (tab === 'encrypt') {
+                encryptTab.classList.add('active');
+                decryptTab.classList.remove('active');
+                hashTab.classList.remove('active');
+                tabs[0].classList.add('active');
+                tabs[1].classList.remove('active');
+                tabs[2].classList.remove('active');
+            } else if (tab === 'decrypt') {
+                encryptTab.classList.remove('active');
+                decryptTab.classList.add('active');
+                hashTab.classList.remove('active');
+                tabs[0].classList.remove('active');
+                tabs[1].classList.add('active');
+                tabs[2].classList.remove('active');
+            } else if (tab === 'hash') {
+                encryptTab.classList.remove('active');
+                decryptTab.classList.remove('active');
+                hashTab.classList.add('active');
+                tabs[0].classList.remove('active');
+                tabs[1].classList.remove('active');
+                tabs[2].classList.add('active');
+            }
+        }
+
+        function encrypt() {
+            const input = document.getElementById('inputEncrypt').value;
+            const key = document.getElementById('keyInputEncrypt').value;
+            const output = document.getElementById('outputEncrypt');
+
+            if (!input || !key) {
+                alert('Пожалуйста, введите текст и ключ.');
+                return;
+            }
+
+            output.value = CryptoJS.AES.encrypt(input, key).toString();
+        }
+
+        function decrypt() {
+            const input = document.getElementById('inputDecrypt').value;
+            const key = document.getElementById('keyInputDecrypt').value;
+            const output = document.getElementById('outputDecrypt');
+
+            if (!input || !key) {
+                alert('Пожалуйста, введите зашифрованный текст и ключ.');
+                return;
+            }
+
+            try {
+                const bytes = CryptoJS.AES.decrypt(input, key);
+                const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+                if (!decrypted) throw new Error('Неверный ключ или текст.');
+                output.value = decrypted;
+            } catch (e) {
+                output.value = 'Ошибка: неверный ключ или текст.';
+            }
+        }
+
+        function hash() {
+            const input = document.getElementById('inputHash').value;
+            const output = document.getElementById('outputHash');
+
+            if (!input) {
+                alert('Пожалуйста, введите текст.');
+                return;
+            }
+
+            output.value = CryptoJS.SHA256(input).toString();
+        }
+    </script>
+</body>
+</html>
